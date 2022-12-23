@@ -132,7 +132,9 @@ def update_range_openpyxl(wb, excel_range, value):
             raise ValueError(f"The cell reference {cell}" +
             " is not in A1 notation or (row, column) notation.")
 
-        # if the cell reference is a list, check that the cell reference is a list of strings or tuples
+        # if the cell reference is a list,
+        # check that the cell reference is
+        # a list of strings or tuples
         if isinstance(cell, list):
             if not all(isinstance(x, (str, tuple)) for x in cell):
                 raise ValueError(f"The cell reference {cell} is not a list of strings or tuples.")
@@ -220,8 +222,8 @@ def update_range_openpyxl(wb, excel_range, value):
 
         # if the cell reference is a list of tuples, update the cells
         if isinstance(cell, list):
-            for i in range(len(cell)):
-                ws.cell(row=cell[i][0], column=cell[i][1]).value = value[i]
+            for i, temp_cell in enumerate(cell):
+                ws.cell(row=temp_cell[0], column=temp_cell[1]).value = value[i]
 
     # save the workbook
     wb.save(filename=wb.filename)
@@ -271,7 +273,7 @@ def update_range_pyxlsb(wb, excel_range, value):
         If the value is a list and the value is not a list of strings or floats.
     ValueError
         If the value is a list and the value is not a list of strings or floats.
-    
+
     Examples
     --------
     >>> import pyxlsb
@@ -396,9 +398,9 @@ def update_range(wb, excel_range, value):
         If the value is a string or float and there is more than one cell reference.
     ValueError
         If the value is a tuple or list and there is more than one cell reference.
-    ValueError  
+    ValueError
         If the value is a list and the value is not a list of strings or floats.
-    
+
     Examples
     --------
     >>> import pyxlsb
