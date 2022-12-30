@@ -8,7 +8,9 @@ import openpyxl
 from .find_links import find_links
 from .is_xlsb import is_xlsb
 
-def update_links_pyxlsb(wb, links):
+# includes an optional range parameter to update links in a specific range on a specific sheet
+# range is passed as a dictionary with the sheet name as the key and the range as the value
+def update_links(wb, links, range=None):
     """
     Description
     -----------
@@ -29,6 +31,17 @@ def update_links_pyxlsb(wb, links):
                 current_link2: desired_link2,
                 ...
             }
+    range : dict
+        The dictionary with the sheet name as the key
+        and the range as the value.
+        Dictionary should be of the form:
+            {
+                sheet_name1: range1,
+                sheet_name2: range2,
+                ...
+            }
+        If range is None, the links will be updated in
+        the entire workbook.
 
     Returns
     -------
@@ -67,6 +80,29 @@ def update_links_pyxlsb(wb, links):
     except:
         raise ValueError("The workbook object is not able to be read by pyxlsb.")
 
+    # if the range is not None just do a find/replace on the range
+    # to ensure that only the links in the range are updated
+    if range is not None:
+        # for each sheet in the range
+        for sheet in range:
+            # get the list of links in the range
+            links_in_range = find_links(wb, sheet, range[sheet])
+
+            # for each link in the list of links in the range
+            for link in links_in_range:
+                # if the link is in the dictionary of links
+                if link in links:
+                    # get the index of the link in the list of links in the range
+                    index = links_in_range.index(link)
+                    # update the link in the list of links in the range
+                    links_in_range[index] = links[link]
+
+            # update the links in the range
+            wb.links = links_in_range
+
+            # return the workbook object
+            return wb
+
     # for each link in the dictionary of links
     for link in links:
         # if the link is in the list of links in the workbook
@@ -89,7 +125,9 @@ def update_links_pyxlsb(wb, links):
     return wb
 
 
-def update_links_openpyxl(wb, links):
+# includes an optional range parameter to update links in a specific range on a specific sheet
+# range is passed as a dictionary with the sheet name as the key and the range as the value
+def update_links_openpyxl(wb, links, update_range=None):
     """
     Update the links in the workbook from
     the current links to the desired links.
@@ -107,6 +145,17 @@ def update_links_openpyxl(wb, links):
                 current_link2: desired_link2,
                 ...
             }
+    update_range : dict
+        The dictionary with the sheet name as the key
+        and the range as the value.
+        Dictionary should be of the form:
+            {
+                sheet_name1: range1,
+                sheet_name2: range2,
+                ...
+            }
+        If range is None, the links will be updated in
+        the entire workbook.
 
     Returns
     -------
@@ -129,26 +178,46 @@ def update_links_openpyxl(wb, links):
     # get the list of links in the workbook
     current_links = [link.target for link in wb._external_links]
 
-    # for each link in the dictionary of links
-    for link in links:
-        # if the link is in the list of links in the workbook
-        if link in current_links:
-            # get the index of the link in the list of links in the workbook
-            index = current_links.index(link)
-            # update the link in the list of links in the workbook
-            current_links[index] = links[link]
-        # if the link is not in the list of links in the workbook
-        else:
-            # pass a message to the user
-            print(f"The link {link} is not in the workbook.")
-            # continue to the next link
-            continue
+    # if the range is not None just do a find/replace on the range
+    # to ensure that only the links in the range are updated
+    if update_range is not None:
+        # get the list of links in the file
+        links_in_file = find_links(wb)
+        
+        # for each sheet in the range
+        # sheet names are the keys in the dictionary
+        for sheet in update_range:
+            # do a find/replace on the range to ensure that
+            # only the links in the range are updated
+            # get the list of links in the range
 
-    # update the links in the workbook
-    wb._external_links = current_links
 
-    # return the workbook object
-    return wb
+            # return the workbook object
+            return wb
+
+    # otherwise, update the links in the entire workbook
+    else:
+
+        # for each link in the dictionary of links
+        for link in links:
+            # if the link is in the list of links in the workbook
+            if link in current_links:
+                # get the index of the link in the list of links in the workbook
+                index = current_links.index(link)
+                # update the link in the list of links in the workbook
+                current_links[index] = links[link]
+            # if the link is not in the list of links in the workbook
+            else:
+                # pass a message to the user
+                print(f"The link {link} is not in the workbook.")
+                # continue to the next link
+                continue
+
+        # update the links in the workbook
+        wb._external_links = current_links
+
+        # return the workbook object
+        return wb
 
 
 def update_links(wb, links):

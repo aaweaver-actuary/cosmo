@@ -192,42 +192,42 @@ class Cosmo:
             # if not None, then the workbook is saved with the new filename
             , new_filename=new_filename
             )
+        ### DROP THE LOG FUNCTIONALITY FOR NOW
+        # # log the action to the cosmo log
+        # # first check if the cosmo log already has a save action anywhere
+        # # in the log
+        # # if it does, then prompt the user to overwrite the save action
+        # # if it does not, then add the save action to the cosmo log
+        # # and then add to the cosmo macro as well
+        # if any(action['action'] == 'save' for action in self.cosmo_log):
+        #     # notify the user that the cosmo log already has a save action 
+        #     # and give the timestamp of the previous save action
+        #     time_stamp = [action['timestamp'] for action in self.cosmo_log if action['action'] == 'save'][0]
+        #     print('The cosmo log already has a save action.')
+        #     print(f'Timestamp of previous save action: {time_stamp}')
 
-        # log the action to the cosmo log
-        # first check if the cosmo log already has a save action anywhere
-        # in the log
-        # if it does, then prompt the user to overwrite the save action
-        # if it does not, then add the save action to the cosmo log
-        # and then add to the cosmo macro as well
-        if any(action['action'] == 'save' for action in self.cosmo_log):
-            # notify the user that the cosmo log already has a save action 
-            # and give the timestamp of the previous save action
-            time_stamp = [action['timestamp'] for action in self.cosmo_log if action['action'] == 'save'][0]
-            print('The cosmo log already has a save action.')
-            print(f'Timestamp of previous save action: {time_stamp}')
+        #     # prompt the user to overwrite the save action
+        #     overwrite = input('Overwrite previous save action? (y/n): ')
+        #     if overwrite.lower() == 'y':
+        #         # remove the previous save action from the cosmo log
+        #         self.cosmo_log = [action for action in self.cosmo_log if action['action'] != 'save']
 
-            # prompt the user to overwrite the save action
-            overwrite = input('Overwrite previous save action? (y/n): ')
-            if overwrite.lower() == 'y':
-                # remove the previous save action from the cosmo log
-                self.cosmo_log = [action for action in self.cosmo_log if action['action'] != 'save']
+        #         # define the save action
+        #         save_action = {
+        #             'action': 'save'
+        #             , 'is_copy': is_copy
+        #             , 'new_filename': new_filename
+        #             , "timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        #         }
 
-                # define the save action
-                save_action = {
-                    'action': 'save'
-                    , 'is_copy': is_copy
-                    , 'new_filename': new_filename
-                    , "timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                }
+        #         # add the save action to the cosmo log
+        #         self.cosmo_log.append(save_action)
 
-                # add the save action to the cosmo log
-                self.cosmo_log.append(save_action)
-
-                # add the save action to the cosmo macro
-                self.cosmo_macro['cosmo_log'] = self.cosmo_log
-            else:
-                # do not overwrite the previous save action
-                pass
+        #         # add the save action to the cosmo macro
+        #         self.cosmo_macro['cosmo_log'] = self.cosmo_log
+        #     else:
+        #         # do not overwrite the previous save action
+        #         pass
 
     # function to close the workbook
     def Close(self):
